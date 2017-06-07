@@ -1,0 +1,26 @@
+version: '2'
+services:
+  redis:
+    image: redis 
+    ports:
+      - "63791:6379"
+  phpfpm:
+    build: ./php7
+    #image: php:7-fpm
+    links:
+      - redis:phpredis
+    environment:
+      - "REDIS_PORT=6379"
+      - "REDIS_HOST=redis"
+    volumes: 
+      - '/Users/ab/docker/www:/app'
+  nginx_server:
+    image: nginx
+    volumes:
+      - '/Users/ab/docker/config/nginx.conf:/etc/nginx/nginx.conf'
+    ports: 
+      - '80:80'
+    links:
+      - phpfpm:phpnginx
+    volumes_from:
+      - phpfpm
